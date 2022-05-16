@@ -1,0 +1,42 @@
+# @package _global_
+batch_size: 64
+
+optimizer_namelist: ["Adam"]
+lr: 0.001
+weight_decay: 0.0005
+
+# デフォルト設定
+defaults:
+  - _self_
+  - datamodule: mnist.yaml
+  - lightning_module: mnist.yaml
+  - model: mnist.yaml
+  - callbacks: default.yaml
+  - logger: null
+  - trainer: default.yaml #single GPUで行う場合
+  # - trainer: ddp.yaml #ddpで行う場合
+  - log_dir: default.yaml
+
+
+# original working directoryのパス
+# hydraはその仕様上, 実行ディレクトリを変更するため注意が必要
+# https://hydra.cc/docs/next/tutorials/basic/running_your_app/working_directory
+original_work_dir: ${hydra:runtime.cwd}
+
+# データを置くフォルダ
+data_dir: ${original_work_dir}/data/
+
+# 学習時をするか否か(Trueならtrain.pyが実行される)
+do_train: True
+
+# 学習時にテストをするか否か
+do_test: True
+
+# seed値
+seed: null
+
+# experiment名を設定. ログの際にこの名前のディレクトリが作られる
+name: "default"
+
+# checkpoint path
+# ckpt_path: "???"

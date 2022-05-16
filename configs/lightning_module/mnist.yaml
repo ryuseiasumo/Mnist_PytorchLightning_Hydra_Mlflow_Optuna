@@ -1,0 +1,5 @@
+_target_: src.mnist_module.MNISTLitModule
+net: "???"
+optimizer_namelist: ${optimizer_namelist}
+lr: ${lr}
+weight_decay: ${weight_decay}
