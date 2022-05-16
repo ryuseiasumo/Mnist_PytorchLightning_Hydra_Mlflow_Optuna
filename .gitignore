@@ -10,7 +10,6 @@ __pycache__
 #一時的
 /configs/experiment/
 /configs/hparams_search/
-/configs/logger/
 
 /scripts/
 /src/test.py

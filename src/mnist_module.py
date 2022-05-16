@@ -21,8 +21,8 @@ class MNISTLitModule(LightningModule):
         super().__init__()
 
         # 引数にバッチサイズなどのパラメータを渡すことで, self.hpparamsに登録されて参照できるようになる
-        # self.save_hyperparameters(ignore=['net']) #loggerを設定している場合
-        self.save_hyperparameters(logger=False, ignore=['net']) #loggerを設定していない場合
+        self.save_hyperparameters(ignore=['net']) #loggerを設定している場合
+        # self.save_hyperparameters(logger=False, ignore=['net']) #loggerを設定していない場合
 
         self.net = net
 

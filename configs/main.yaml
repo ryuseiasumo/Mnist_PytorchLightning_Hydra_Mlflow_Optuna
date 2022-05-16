@@ -12,7 +12,7 @@ defaults:
   - lightning_module: mnist.yaml
   - model: mnist.yaml
   - callbacks: default.yaml
-  - logger: null
+  - logger: mlflow.yaml
   - trainer: default.yaml #single GPUで行う場合
   # - trainer: ddp.yaml #ddpで行う場合
   - log_dir: default.yaml
