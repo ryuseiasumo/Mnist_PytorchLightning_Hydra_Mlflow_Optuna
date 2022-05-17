@@ -28,6 +28,8 @@ class MNISTDataModule(LightningDataModule):
         pin_memory: bool = False,
     ):
         super().__init__()
+        # マルチCPUで並列に処理する際に利用 → dataloaderにおける"RuntimeError: Too many open files."を防ぐ.
+        torch.multiprocessing.set_sharing_strategy('file_system')
 
         # 引数にバッチサイズなどのパラメータを渡すことで, self.hpparamsに登録されて参照できるようになる
         self.save_hyperparameters(logger=False)

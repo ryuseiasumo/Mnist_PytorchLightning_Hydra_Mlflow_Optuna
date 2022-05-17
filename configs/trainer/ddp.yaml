@@ -1,6 +1,7 @@
+# DDPを用いると, Optuna利用の際はエラーになったため注意(2022/05/17時点では原因不明)
 defaults:
   - default.yaml
 
-gpus: [0,1,2]
+gpus: [0,1]
 strategy: ddp
 sync_batchnorm: True

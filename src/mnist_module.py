@@ -60,7 +60,7 @@ class MNISTLitModule(LightningModule):
 
     def training_epoch_end(self, outputs: List[Any]):
         # `outputs` is a list of dicts returned from `training_step()`
-        pass
+        self.on_each_epoch_end()
 
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -77,6 +77,7 @@ class MNISTLitModule(LightningModule):
         acc = self.val_acc.compute()  #　現在のepochでのVal Accuracy
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True) #現状で最大のAccuracyを出せるモデルを記録
+        self.on_each_epoch_end()
 
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
@@ -89,9 +90,9 @@ class MNISTLitModule(LightningModule):
         return {"loss": loss, "preds": preds, "targets": targets}
 
     def test_epoch_end(self, outputs: List[Any]):
-        pass
+        self.on_each_epoch_end()
 
-    def on_epoch_end(self):
+    def on_each_epoch_end(self):
         # エポックの終わり毎にリセット
         self.train_acc.reset()
         self.test_acc.reset()

@@ -14,8 +14,9 @@ From: nvcr.io/nvidia/pytorch:21.06-py3
     conda install -c conda-forge opencv #opencv 4.5.1
     pip install torch-summary #torch-summary 1.4.5
     pip install seaborn #seaborn 0.11.2
-    pip install hydra-core #hydra-core 1.1.2(1.0.xとかのがいいの？)
-    pip install optuna #optuna2.10.0  
+    pip install optuna #optuna2.10.0
+    pip install hydra-core #hydra-core 1.1.2
+    pip install hydra-optuna-sweeper
 	pip install pytorch-lightning #pytorch-lightning 1.6.1
     pip install mlflow #1.25.1
     pip install pygame #2.1.2

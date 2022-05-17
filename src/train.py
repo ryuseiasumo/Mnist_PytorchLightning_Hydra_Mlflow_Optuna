@@ -13,7 +13,7 @@ from pytorch_lightning import (
     seed_everything,
 )
 from pytorch_lightning.loggers import LightningLoggerBase
-
+from src import utils
 
 def train(config: DictConfig) -> Optional[float]:
     """
@@ -25,8 +25,8 @@ def train(config: DictConfig) -> Optional[float]:
     """
 
     # 並列に使用するcpuのユニット数
-    # num_workers = os.cpu_count() #最大数利用する場合 → RuntimeError: Too many open files.となることがあるので注意
-    num_workers = 4
+    ## 最大数利用する場合
+    num_workers = os.cpu_count()
     
     # seed値の設定
     if config.get("seed"):
@@ -64,23 +64,30 @@ def train(config: DictConfig) -> Optional[float]:
 
     # lightning trainer
     trainer: Trainer = hydra.utils.instantiate(
-        config.trainer, callbacks=callbacks, logger=logger, #_convert_="partial"
+        config.trainer, callbacks=callbacks, logger=logger, _convert_="partial"
     )
 
     # Send some parameters from config to all lightning loggers
-    # log.info("Logging hyperparameters!")
-    # utils.log_hyperparameters(
-    #     config=config,
-    #     model=lit_model,
-    #     datamodule=datamodule,
-    #     trainer=trainer,
-    #     callbacks=callbacks,
-    #     logger=logger,
-    # )
+    utils.log_hyperparameters(
+        config=config,
+        model=lit_model,
+        datamodule=datamodule,
+        trainer=trainer,
+        callbacks=callbacks,
+        logger=logger,
+    )
 
     # Train the model
     trainer.fit(model=lit_model, datamodule=datamodule)
 
+    # hyperparameter最適化の結果（metric score）を取得(Optunaで利用)
+    optimized_metric = config.get("optimized_metric")
+    if optimized_metric and optimized_metric not in trainer.callback_metrics:
+        raise Exception(
+            "Metric for hyperparameter optimization not found! "
+            "Make sure the `optimized_metric` in `hparams_search` config is correct!"
+        )
+    score = trainer.callback_metrics.get(optimized_metric)
 
     # Test the model
     if config.get("do_test"):
@@ -94,3 +101,6 @@ def train(config: DictConfig) -> Optional[float]:
     print(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
     # if not config.trainer.get("fast_dev_run") and config.get("do_train"):
     #     log.info(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
+    
+
+    return score
