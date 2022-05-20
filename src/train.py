@@ -5,6 +5,8 @@ import hydra
 from omegaconf import DictConfig
 
 import torch
+torch.multiprocessing.set_sharing_strategy('file_system')
+
 from pytorch_lightning import (
     Callback,
     LightningDataModule,
@@ -25,8 +27,8 @@ def train(config: DictConfig) -> Optional[float]:
     """
 
     # 並列に使用するcpuのユニット数
-    # num_workers = os.cpu_count() #最大数利用する場合 → RuntimeError: Too many open files.となることがあるので注意
-    num_workers = 4
+    #最大数利用する場合 → RuntimeError: Too many open files.となることがある →  torch.multiprocessing.set_sharing_strategy('file_system')で解決
+    num_workers = os.cpu_count()
     
     # seed値の設定
     if config.get("seed"):
@@ -67,7 +69,7 @@ def train(config: DictConfig) -> Optional[float]:
         config.trainer, callbacks=callbacks, logger=logger, #_convert_="partial"
     )
 
-    # Send some parameters from config to all lightning loggers
+    # configに設定したパラメータをloggersに送る.
     # log.info("Logging hyperparameters!")
     # utils.log_hyperparameters(
     #     config=config,
@@ -80,17 +82,21 @@ def train(config: DictConfig) -> Optional[float]:
 
     # Train the model
     trainer.fit(model=lit_model, datamodule=datamodule)
+    best_model_path = trainer.checkpoint_callback.best_model_path
 
-
+    
     # Test the model
     if config.get("do_test"):
         ckpt_path = "best"
         if not config.get("do_train") or config.trainer.get("fast_dev_run"):
             ckpt_path = None
-        trainer.test(model=lit_model, datamodule=datamodule, ckpt_path=ckpt_path)
+            
+        if trainer.global_rank == 0: #最後のプロセス
+            # テスト用のtrainerを用意(Single GPU)
+            test_trainer = Trainer(gpus=1, logger=logger, max_epochs=1) #trainerと別の場所にlogが取られてしまうため注意
+            test_trainer.test(model=lit_model, datamodule=datamodule, ckpt_path=best_model_path)
+
 
 
     # 最もVal Accが高い, モデルのパスを出力
-    print(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
-    # if not config.trainer.get("fast_dev_run") and config.get("do_train"):
-    #     log.info(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
+    print(f"Best model ckpt at {best_model_path}")

@@ -13,8 +13,8 @@ defaults:
   - model: mnist.yaml
   - callbacks: default.yaml
   - logger: mlflow.yaml
-  - trainer: default.yaml #single GPUで行う場合
-  # - trainer: ddp.yaml #ddpで行う場合
+  # - trainer: default.yaml #single GPUで行う場合
+  - trainer: ddp.yaml #ddpで行う場合
   - log_dir: default.yaml
 
 

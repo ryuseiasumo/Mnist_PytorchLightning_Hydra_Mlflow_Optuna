@@ -6,3 +6,11 @@ hydra:
   sweep:
     dir: logs/experiments/multiruns/${name}/${now:%Y-%m-%d}_${now:%H-%M-%S}
     subdir: ${hydra.job.num}
+
+
+# hydra:
+#   run:
+#     dir: logs/experiments/runs/${name}/${uuid:}
+#   sweep:
+#     dir: logs/experiments/multiruns/${name}/${uuid:}
+#     subdir: ${hydra.job.num}
