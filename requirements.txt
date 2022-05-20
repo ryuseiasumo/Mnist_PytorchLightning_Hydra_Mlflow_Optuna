@@ -1,0 +1,14 @@
+# nvcr.io/nvidia/pytorch:21.06-py3とpython, pytorch等は同じにする（https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel_21-06.html#rel_21-06）
+    # Python 3.8.10
+    # pytorch 1.9.0a0+c3d40fd
+    # torchvision 0.10.0a0
+# conda install -c conda-forge opencv==4.5.1
+
+torch-summary==1.4.5
+seaborn==0.11.2
+hydra-core==1.1.2
+hydra-optuna-sweeper==1.1.2
+optuna==2.10.0
+pytorch-lightning==1.6.3
+mlflow==1.26.0
+wandb==0.12.16

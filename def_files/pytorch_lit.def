@@ -1,8 +1,11 @@
-# 畑用
-# $singularity build --fakeroot pytorch.sif /home0/hatar/self_study/deep-learning-from-scratch-4/pytorch.def
+# Mnist_PytorchLightning_Hydra_Mlflow_Optunaで, 以下を実行
+# $singularity build --fakeroot pytorch.sif ../def_files/pytorch.def
 
 Bootstrap: docker
 From: nvcr.io/nvidia/pytorch:21.06-py3
+
+%files
+    requirements.txt /opt/requirements.txt
 
 %post
     apt -y update
@@ -11,19 +14,6 @@ From: nvcr.io/nvidia/pytorch:21.06-py3
     export DEBIAN_FRONTEND=noninteractive  # TimeZone等の質問をスキップする用の環境変数
 
 %post
-    conda install -c conda-forge opencv #opencv 4.5.1
-    pip install torch-summary #torch-summary 1.4.5
-    pip install seaborn #seaborn 0.11.2
-    pip install hydra-core #hydra-core 1.1.2(1.0.xとかのがいいの？)
-    pip install optuna #optuna2.10.0  
-	pip install pytorch-lightning #pytorch-lightning 1.6.1
-    pip install mlflow #1.25.1
-    pip install pygame #2.1.2
-    pip install gym #0.7.4
-    pip install wandb
-
-    # 以下のは入れるとエラーが出た.
-    #   #assert mdl is not None / AssertionError
-    #   #ImportError: cannot import name 'OrderedDict' from 'typing_extensions' (/home0/hatar/.local/lib/python3.8/site-packages/typing_extensions.py)
-    #pip install omegaconf -U
-    #pip install rich -U
+    conda install -c conda-forge opencv==4.5.1
+    chmod 755 /opt/requirements.txt
+    pip install -r /opt/requirements.txt
