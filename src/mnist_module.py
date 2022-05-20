@@ -40,57 +40,93 @@ class MNISTLitModule(LightningModule):
     def forward(self, x: torch.Tensor):
         return self.net(x)
 
+
     def step(self, batch: Any):
+        """
+        Args:
+            batch (Any): 入力のミニバッチ
+
+        Returns:
+            {"logits": logits, "preds": preds, "targets": y} (Dict): ネットワークの出力, 最も高い値の次元(index), 真値 
+        """
         x, y = batch
         logits = self.forward(x)
-        loss = self.criterion(logits, y)
         preds = torch.argmax(logits, dim=1)
-        return loss, preds, y
+        return {"logits": logits, "preds": preds, "targets": y}
+
+
 
     def training_step(self, batch: Any, batch_idx: int):
-        loss, preds, targets = self.step(batch)
-
-        # log train metrics
+        return self.step(batch)
+        
+        
+    # DPを使う場合には, training_step_endでロス計算を行う必要あり(hydraを用いる場合)
+    def training_step_end(self, batch_parts_outputs):
+        logits = batch_parts_outputs["logits"]
+        preds = batch_parts_outputs["preds"]
+        targets = batch_parts_outputs["targets"]
+        
+        # loss, accの計算
+        loss = self.criterion(logits, targets)
         acc = self.train_acc(preds, targets)
         self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
-
-        #ディクショナリに任意のテンソル(lossを含めて)を入れて返す.
+        
         return {"loss": loss, "preds": preds, "targets": targets}
 
+
     def training_epoch_end(self, outputs: List[Any]):
-        # `outputs` is a list of dicts returned from `training_step()`
         self.on_each_epoch_end()
 
-    def validation_step(self, batch: Any, batch_idx: int):
-        loss, preds, targets = self.step(batch)
 
+
+
+    def validation_step(self, batch: Any, batch_idx: int):
+        return self.step(batch)
+
+        
+    def validation_step_end(self, batch_parts_outputs):        
+        logits = batch_parts_outputs["logits"]
+        preds = batch_parts_outputs["preds"]
+        targets = batch_parts_outputs["targets"]
+        
         # log val metrics
+        loss = self.criterion(logits, targets)
         acc = self.val_acc(preds, targets)
         # callback時, ModelCheckpointの引数である"monitor"を"val/acc"に指定するのにも使われる
         self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
         self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
-
+        
         return {"loss": loss, "preds": preds, "targets": targets}
-
+        
     def validation_epoch_end(self, outputs: List[Any]):
         acc = self.val_acc.compute()  #　現在のepochでのVal Accuracy
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True) #現状で最大のAccuracyを出せるモデルを記録
         self.on_each_epoch_end()
+        
+        
+        
 
     def test_step(self, batch: Any, batch_idx: int):
-        loss, preds, targets = self.step(batch)
+        return self.step(batch)
 
+    def test_step_end(self, batch_parts_outputs):    
+        logits = batch_parts_outputs["logits"]
+        preds = batch_parts_outputs["preds"]
+        targets = batch_parts_outputs["targets"]
+        
         # log test metrics
+        loss = self.criterion(logits, targets)
         acc = self.test_acc(preds, targets)
         self.log("test/loss", loss, on_step=False, on_epoch=True)
         self.log("test/acc", acc, on_step=False, on_epoch=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
-
+    
     def test_epoch_end(self, outputs: List[Any]):
         self.on_each_epoch_end()
+        
 
     def on_each_epoch_end(self):
         # エポックの終わり毎にリセット

@@ -13,15 +13,17 @@ def main(config: DictConfig):
     print("original working directry:", config.original_work_dir) # mainファイルが本来あるディレクトリ
     print("current directry:", os.getcwd()) # hydraを用いるとディレクトリが移動する
     
+    # print("---View parameter configuration---")
+    # print(OmegaConf.to_yaml(config))  #hydraの設定を表示
+    # print("----------------------------------")
+    
     if config.do_train: #学習を行う場合
         # trainの処理
         from src.train import train
             
         # Train model
         return train(config)
-    
-    
-    
+
 
 
 if __name__ == "__main__":

@@ -18,7 +18,8 @@ defaults:
   - log_dir: default.yaml
   
   # Optuna(hyperparameter最適化)
-  - hparams_search: mnist_optuna.yaml
+  - hparams_search: null #デフォルトではOptunaを使用しない場合
+  # - hparams_search: mnist_optuna.yaml #デフォルトでOptunaを使用する場合
 
 
 # original working directoryのパス
