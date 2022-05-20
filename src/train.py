@@ -1,3 +1,4 @@
+
 import os
 from typing import List, Optional
 
@@ -5,6 +6,8 @@ import hydra
 from omegaconf import DictConfig
 
 import torch
+torch.multiprocessing.set_sharing_strategy('file_system')
+
 from pytorch_lightning import (
     Callback,
     LightningDataModule,
@@ -14,6 +17,8 @@ from pytorch_lightning import (
 )
 from pytorch_lightning.loggers import LightningLoggerBase
 from src import utils
+
+
 
 def train(config: DictConfig) -> Optional[float]:
     """
@@ -25,7 +30,7 @@ def train(config: DictConfig) -> Optional[float]:
     """
 
     # 並列に使用するcpuのユニット数
-    ## 最大数利用する場合
+    #最大数利用する場合 → RuntimeError: Too many open files.となることがある →  torch.multiprocessing.set_sharing_strategy('file_system')で解決
     num_workers = os.cpu_count()
     
     # seed値の設定
@@ -38,6 +43,7 @@ def train(config: DictConfig) -> Optional[float]:
         config.trainer.resume_from_checkpoint = os.path.join(
             hydra.utils.get_original_cwd(), ckpt_path
         )
+    
     
     # lightning datamodule
     datamodule: LightningDataModule = hydra.utils.instantiate(config.datamodule, num_workers=num_workers)
@@ -64,10 +70,10 @@ def train(config: DictConfig) -> Optional[float]:
 
     # lightning trainer
     trainer: Trainer = hydra.utils.instantiate(
-        config.trainer, callbacks=callbacks, logger=logger, _convert_="partial"
+        config.trainer, callbacks=callbacks, logger=logger, #_convert_="partial"
     )
 
-    # Send some parameters from config to all lightning loggers
+    # configに設定したパラメータをloggersに送る.
     utils.log_hyperparameters(
         config=config,
         model=lit_model,
@@ -77,8 +83,10 @@ def train(config: DictConfig) -> Optional[float]:
         logger=logger,
     )
 
+
     # Train the model
     trainer.fit(model=lit_model, datamodule=datamodule)
+    best_model_path = trainer.checkpoint_callback.best_model_path
 
     # hyperparameter最適化の結果（metric score）を取得(Optunaで利用)
     optimized_metric = config.get("optimized_metric")
@@ -89,18 +97,22 @@ def train(config: DictConfig) -> Optional[float]:
         )
     score = trainer.callback_metrics.get(optimized_metric)
 
+
+
     # Test the model
     if config.get("do_test"):
         ckpt_path = "best"
         if not config.get("do_train") or config.trainer.get("fast_dev_run"):
             ckpt_path = None
-        trainer.test(model=lit_model, datamodule=datamodule, ckpt_path=ckpt_path)
+            
+        if trainer.global_rank == 0: #最後のプロセス
+            # テスト用のtrainerを用意(Single GPU)
+            test_trainer = Trainer(gpus=1, logger=logger, max_epochs=1) #trainerと別の場所にlogが取られてしまうため注意
+            test_trainer.test(model=lit_model, datamodule=datamodule, ckpt_path=best_model_path)
 
 
     # 最もVal Accが高い, モデルのパスを出力
-    print(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
-    # if not config.trainer.get("fast_dev_run") and config.get("do_train"):
-    #     log.info(f"Best model ckpt at {trainer.checkpoint_callback.best_model_path}")
+    print(f"Best model ckpt at {best_model_path}")
     
 
     return score

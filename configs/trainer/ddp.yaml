@@ -2,6 +2,6 @@
 defaults:
   - default.yaml
 
-gpus: [0,1]
-strategy: ddp
+gpus: [0,1,2] # gpu3つ使う場合
+strategy: ddp # Distributed Data Parallel
 sync_batchnorm: True

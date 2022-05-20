@@ -36,8 +36,9 @@ def log_hyperparameters(
         p.numel() for p in model.parameters() if not p.requires_grad
     )
 
-    # hparams["datamodule"] = config["datamodule"]
+    # save hyper parameters of "datamodule"
     hparams["datamodule"] = {'_target_': config["datamodule"]['_target_'], 'data_dir': config["datamodule"]['data_dir'], 'batch_size': config["datamodule"]['batch_size'], 'train_val_test_split': config["datamodule"]['train_val_test_split'], 'pin_memory': config["datamodule"]['pin_memory']}
+    # hparams["datamodule"] = config["datamodule"]
     
     hparams["trainer"] = config["trainer"]
 
