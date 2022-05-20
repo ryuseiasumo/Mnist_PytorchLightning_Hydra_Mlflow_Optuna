@@ -28,7 +28,7 @@ def main(config: DictConfig):
 
 if __name__ == "__main__":
     #python main.py do_train=False #コマンドライン引数でhydraで与えた変数の値の変更も可能
-    #python main.py --multirun model=mnist, cnn, ... #いろんな条件でやりたい時
-    #python main.py --multirun #Optuna利用時は, "--multirun"が必須
+    #python main.py trainer=dp.yaml logger=csv.yaml ... #いろんな条件でやりたい時
+    #python main.py --multirun hparams_search=mnist_optuna.yaml #Optuna利用時は, "--multirun"が必須
     
     main()
