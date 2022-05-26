@@ -5,15 +5,15 @@ PytorchLightning, Hydra, MLflow, Optunaの個人的な練習用に作成しま�
 <br/>
 
 # Version
-タグに載せたバージョン毎に、以下の仕様となっています（__赤文字バージョンの使用を推奨__）。mainブランチに上げているのはv3.1です。
-* __v1.x : PytorchLightning + Hydra__
-    * <span style="color: red; ">v1.1 : Single GPUとDP(Data Parallel)、DDP(Distributed Data Parallel)が可能(推奨)。</span>
+タグに載せたバージョン毎に、以下の仕様となっています（__太字バージョンの使用を推奨__）。mainブランチに上げているのはv3.1です。
+* ### v1.x : PytorchLightning + Hydra
+    * __v1.1 : Single GPUとDP(Data Parallel)、DDP(Distributed Data Parallel)が可能(推奨)。__
     * v1.0 : Single GPUとDDPのみ可能(非推奨)。
-* __v2.x : PytorchLightning + Hydra + MLflow__
-    * <span style="color: red; ">v2.1 : Single GPUとDP、DDPが可能(推奨)。</span>
+* ### v2.x : PytorchLightning + Hydra + MLflow
+    * __v2.1 : Single GPUとDP、DDPが可能(推奨)。__
     * v2.0 : Single GPUとDDPのみ可能(非推奨)。
-* __v3.x : PytorchLightning + Hydra + MLflow + Optuna__
-    * <span style="color: red; ">v3.1 : Single GPUとDP、DDPが可能(推奨)。</span>
+* ### v3.x : PytorchLightning + Hydra + MLflow + Optuna
+    * __v3.1 : Single GPUとDP、DDPが可能(推奨)。__
     * v3.0 : Single GPUのみ可能(非推奨)。
 
 # 開発環境
@@ -76,7 +76,7 @@ $ mlflow ui # 5000番ポートで接続。ポートを変えたい場合は、 -
     hparams["datamodule"] = {'_target_': config["datamodule"]['_target_'], 'data_dir': config["datamodule"]['data_dir'], 'batch_size': config["datamodule"]['batch_size'], 'train_val_test_split': config["datamodule"]['train_val_test_split'], 'pin_memory': config["datamodule"]['pin_memory']}
     ```
     
-* \$ mlflow uiを利用して、サーバで実行した実験結果をクライアントのWebブラウザから見る場合はポートの開放をしないと見れないので注意してください。VS Codeでssh設定している場合は、VS Code上のターミナルで\$ mlflow uiを実行すると楽です。
+* ```$ mlflow ui```を利用して、サーバで実行した実験結果をクライアントのWebブラウザから見る場合はポートの開放をしないと見れないので注意してください。VS Codeでssh設定している場合は、VS Code上のターミナルで```$ mlflow ui```を実行すると楽です。
 
 
 <br/>

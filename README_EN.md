@@ -5,15 +5,15 @@ Created for personal practice with PytorchLightning, Hydra, MLflow and Optuna, u
 <br/>
 
 # Version
-The specifications are as follows for each version listed in the tags (__red-lettered versions are recommended__). v3.1 is the one I have on the main branch.
-* __v1.x : PytorchLightning + Hydra__
-    * <span style="color: red; ">v1.1 : Single GPU and DP (Data Parallel) and DDP (Distributed Data Parallel) are available (recommended).</span>
+The specifications are as follows for each version listed in the tags (__bold versions are recommended__). v3.1 is the one I have on the main branch.
+* ### v1.x : PytorchLightning + Hydra
+    * __v1.1 : Single GPU and DP (Data Parallel) and DDP (Distributed Data Parallel) are available (recommended).__
     * v1.0 : Only Single GPU and DDP are available (deprecated).
-* __v2.x : PytorchLightning + Hydra + MLflow__
-    * <span style="color: red; ">v2.1 : Single GPU and DP and DDP are available (recommended).</span>
+* ### v2.x : PytorchLightning + Hydra + MLflow
+    * __v2.1 : Single GPU and DP and DDP are available (recommended).__
     * v2.0 : Only Single GPU and DDP are available (deprecated).
-* __v3.x : PytorchLightning + Hydra + MLflow + Optuna__
-    * <span style="color: red; ">v3.1 : Single GPU and DP and DDP are available (recommended).</span>
+* ### v3.x : PytorchLightning + Hydra + MLflow + Optuna
+    * __v3.1 : Single GPU and DP and DDP are available (recommended).__
     * v3.0 : Only Single GPU is available (deprecated).
 
 # Development environment
@@ -70,13 +70,13 @@ $ mlflow ui # Connect on port 5000. If you want to change the port, -p port numb
     ```
 
 
-* The following part of "src/utils/\_init\_\_.py" (around line 40) depends on the contents of "configs/datamodule/mnist.yaml", so please be careful when using it in other codes.
+* The following part of "src/utils/\_\_init\_\_.py" (around line 40) depends on the contents of "configs/datamodule/mnist.yaml", so please be careful when using it in other codes.
     ```python
     # save hyper parameters of "datamodule"
     hparams["datamodule"] = {'_target_': config["datamodule"]['_target_'], 'data_dir': config["datamodule"]['data_dir'], 'batch_size': config["datamodule"]['batch_size'], 'train_val_test_split': config["datamodule"]['train_val_test_split'], 'pin_memory': config["datamodule"]['pin_memory']}
     ```
 
-* Please note that if you use \$ mlflow ui to view the results of an experiment run on the server from a client's web browser, you must open the port to view the results. If you have set up ssh in VS Code, it is easier to run \$ mlflow ui in a terminal on VS Code.
+* Please note that if you use ```$ mlflow ui``` to view the results of an experiment run on the server from a client's web browser, you must open the port to view the results. If you have set up ssh in VS Code, it is easier to run ```$ mlflow ui``` in a terminal on VS Code.
 
 <br/>
 
