@@ -40,7 +40,7 @@ do_test: True
 seed: null
 
 # experiment名を設定. ログの際にこの名前のディレクトリが作られる
-name: "default"
+name: "Default"
 
 # checkpoint path
 # ckpt_path: "???"

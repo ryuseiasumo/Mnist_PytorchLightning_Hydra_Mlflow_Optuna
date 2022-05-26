@@ -1,19 +1,19 @@
 # Mnist_PytorchLightning_Hydra_Mlflow_Optuna
 Created for personal practice with PytorchLightning, Hydra, MLflow and Optuna, using Mnist as an example, inspired by [lightning-hydra-template](https://github.com/ashleve/lightning-hydra-template)。
 
-<u>__[日本語版](./README.md)__</u>
-
+## __[日本語版](./README.md)__
+<br/>
 
 # Version
-The specifications are as follows for each version listed in the tags (__underlined versions are recommended__). v3.1 is the one I have on the main branch.
+The specifications are as follows for each version listed in the tags (__red-lettered versions are recommended__). v3.1 is the one I have on the main branch.
 * __v1.x : PytorchLightning + Hydra__
-    * <u>v1.1 : Single GPU and DP (Data Parallel) and DDP (Distributed Data Parallel) are available (recommended).</u>
+    * <span style="color: red; ">v1.1 : Single GPU and DP (Data Parallel) and DDP (Distributed Data Parallel) are available (recommended).</span>
     * v1.0 : Only Single GPU and DDP are available (deprecated).
 * __v2.x : PytorchLightning + Hydra + MLflow__
-    * <u>v2.1 : Single GPU and DP and DDP are available (recommended).</u>
+    * <span style="color: red; ">v2.1 : Single GPU and DP and DDP are available (recommended).</span>
     * v2.0 : Only Single GPU and DDP are available (deprecated).
 * __v3.x : PytorchLightning + Hydra + MLflow + Optuna__
-    * <u>v3.1 : Single GPU and DP and DDP are available (recommended).</u>
+    * <span style="color: red; ">v3.1 : Single GPU and DP and DDP are available (recommended).</span>
     * v3.0 : Only Single GPU is available (deprecated).
 
 # Development environment
@@ -44,6 +44,13 @@ $ python main.py trainer=dp.yaml logger=csv.yaml batch_size=128
 
 # To use Optuna in v3.x, execute as follows
 $ python main.py --multirun hparams_search=mnist_optuna.yaml
+
+
+
+# Confirmation of experimental results on a web browser by mlflow.
+$ cd logs/mlflow/ # Go to the directory where the "mlruns directory" is located.
+$ mlflow ui # Connect on port 5000. If you want to change the port, -p port number.
+# -> http://localhost:5000/
 ```
 
 
@@ -68,3 +75,27 @@ $ python main.py --multirun hparams_search=mnist_optuna.yaml
     # save hyper parameters of "datamodule"
     hparams["datamodule"] = {'_target_': config["datamodule"]['_target_'], 'data_dir': config["datamodule"]['data_dir'], 'batch_size': config["datamodule"]['batch_size'], 'train_val_test_split': config["datamodule"]['train_val_test_split'], 'pin_memory': config["datamodule"]['pin_memory']}
     ```
+
+* Please note that if you use \$ mlflow ui to view the results of an experiment run on the server from a client's web browser, you must open the port to view the results. If you have set up ssh in VS Code, it is easier to run \$ mlflow ui in a terminal on VS Code.
+
+<br/>
+
+# Reference Sites
+## Pytorch Lightning
+* [lightning-hydra-template (github)](https://github.com/ashleve/lightning-hydra-template)
+* [Pytorch Lightning](https://www.pytorchlightning.ai/)
+* [Let's study the PyTorch Lightning API](https://qiita.com/ground0state/items/c1d705ca2ee329cdfae4)
+* [About DataParallel](https://pytorch-lightning.readthedocs.io/en/1.5.8/advanced/multi_gpu.html)
+
+## Hydra
+* [Hydra](https://hydra.cc/docs/intro/)
+* [How to manage Python and machine learning parameters using Hydra](https://zenn.dev/kwashizzz/articles/ml-hydra-param)
+* [Problems with working directory changes in Hydra](https://zenn.dev/ken7/articles/149becf3bea910)
+
+## Mlflow
+* [MLFlowLogger PytorchLightning](https://pytorch-lightning.readthedocs.io/en/stable/extensions/generated/pytorch_lightning.loggers.MLFlowLogger.html#pytorch_lightning.loggers.MLFlowLogger)
+* [Notes on using MLflow](https://zenn.dev/currypurin/articles/15bd449da18807b08f89)
+* [Cloud Engineer's Notebook](https://tmyoda.hatenablog.com/entry/20210422/1619085282#Runs)
+
+## Optuna
+* [Automatic Tuning of Hyperparameters with Optuna -Pytorch Lightning Edition-](https://cpp-learning.com/optuna-pytorch/#Optuna_-Pytorch_Lightning)
