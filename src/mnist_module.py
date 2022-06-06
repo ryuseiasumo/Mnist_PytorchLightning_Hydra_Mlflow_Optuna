@@ -105,8 +105,6 @@ class MNISTLitModule(LightningModule):
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True) #現状で最大のAccuracyを出せるモデルを記録
         self.on_each_epoch_end()
         
-        
-        
 
     def test_step(self, batch: Any, batch_idx: int):
         return self.step(batch)

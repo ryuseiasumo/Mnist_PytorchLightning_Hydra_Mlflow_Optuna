@@ -1,4 +1,3 @@
-# DDPを用いると, Optuna利用の際はエラーになったため注意(2022/05/17時点では原因不明)
 defaults:
   - default.yaml
 
